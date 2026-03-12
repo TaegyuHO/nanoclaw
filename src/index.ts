@@ -10,7 +10,10 @@ import {
   TIMEZONE,
   TRIGGER_PATTERN,
 } from './config.js';
-import { startCredentialProxy, startOpenAICredentialProxy } from './credential-proxy.js';
+import {
+  startCredentialProxy,
+  startOpenAICredentialProxy,
+} from './credential-proxy.js';
 import './channels/index.js';
 import {
   getChannelFactory,
