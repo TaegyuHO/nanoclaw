@@ -1,6 +1,7 @@
 ---
 name: add-ollama-tool
 description: Add Ollama MCP server so the container agent can call local models for cheaper/faster tasks like summarization, translation, or general queries.
+guide: ../../guides/add-ollama-tool/guide.md
 ---
 
 # Add Ollama Integration

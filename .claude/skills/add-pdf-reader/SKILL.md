@@ -1,6 +1,7 @@
 ---
 name: add-pdf-reader
 description: Add PDF reading to NanoClaw agents. Extracts text from PDFs via pdftotext CLI. Handles WhatsApp attachments, URLs, and local files.
+guide: ../../guides/add-pdf-reader/guide.md
 ---
 
 # Add PDF Reader

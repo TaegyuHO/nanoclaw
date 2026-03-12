@@ -1,0 +1,106 @@
+# NanoClaw Guides Index
+# Machine-readable registry of all tool-neutral guides.
+
+guides:
+  # Core
+  - name: setup
+    path: setup/guide.md
+    description: Install dependencies, authenticate, configure services
+    tags: [core, setup, installation]
+    requires:
+      tools: [git, node]
+
+  - name: debug
+    path: debug/guide.md
+    description: Container debugging, logs, troubleshooting
+    tags: [core, debug, troubleshooting, container]
+    requires:
+      tools: [docker]
+
+  # Channels
+  - name: add-telegram
+    path: add-telegram/guide.md
+    description: Add Telegram bot channel
+    tags: [channel, telegram, messaging]
+    requires:
+      tools: [git, npm]
+      services: [telegram-bot]
+
+  - name: add-whatsapp
+    path: add-whatsapp/guide.md
+    description: Add WhatsApp channel via QR/pairing code
+    tags: [channel, whatsapp, messaging]
+    requires:
+      tools: [git, npm]
+
+  - name: add-slack
+    path: add-slack/guide.md
+    description: Add Slack channel via Socket Mode
+    tags: [channel, slack, messaging]
+    requires:
+      tools: [git, npm]
+      services: [slack-app]
+
+  - name: add-discord
+    path: add-discord/guide.md
+    description: Add Discord bot channel
+    tags: [channel, discord, messaging]
+    requires:
+      tools: [git, npm]
+      services: [discord-bot]
+
+  - name: add-gmail
+    path: add-gmail/guide.md
+    description: Add Gmail as tool or full channel
+    tags: [channel, gmail, email, google]
+    requires:
+      tools: [git, npm]
+      services: [gcp-oauth]
+
+  # Features
+  - name: add-voice-transcription
+    path: add-voice-transcription/guide.md
+    description: Whisper API voice message transcription
+    tags: [feature, voice, whisper, whatsapp]
+    requires:
+      tools: [git, npm]
+      services: [openai-api]
+      prerequisites: [whatsapp-channel]
+
+  - name: add-pdf-reader
+    path: add-pdf-reader/guide.md
+    description: PDF text extraction for agents
+    tags: [feature, pdf, whatsapp]
+    requires:
+      tools: [git, npm, docker]
+      prerequisites: [whatsapp-channel]
+
+  - name: add-image-vision
+    path: add-image-vision/guide.md
+    description: Image attachment processing
+    tags: [feature, image, vision, whatsapp]
+    requires:
+      tools: [git, npm, docker]
+      prerequisites: [whatsapp-channel]
+
+  - name: add-ollama-tool
+    path: add-ollama-tool/guide.md
+    description: Local Ollama model integration via MCP
+    tags: [feature, ollama, local-models, mcp]
+    requires:
+      tools: [git, npm, docker, ollama]
+
+  - name: add-reactions
+    path: add-reactions/guide.md
+    description: WhatsApp emoji reaction support
+    tags: [feature, reactions, emoji, whatsapp]
+    requires:
+      tools: [git, npm]
+      prerequisites: [whatsapp-channel]
+
+  - name: add-compact
+    path: add-compact/guide.md
+    description: Manual context compaction command
+    tags: [feature, session, compact]
+    requires:
+      tools: [git, npm, docker]

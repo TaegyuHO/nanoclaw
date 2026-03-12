@@ -123,3 +123,84 @@ export function detectAuthMode(): AuthMode {
   const secrets = readEnvFile(['ANTHROPIC_API_KEY']);
   return secrets.ANTHROPIC_API_KEY ? 'api-key' : 'oauth';
 }
+
+/**
+ * OpenAI credential proxy for Codex container isolation.
+ * Same pattern as Anthropic proxy: containers get a placeholder key,
+ * this proxy injects the real OPENAI_API_KEY on every request.
+ * Returns null if OPENAI_API_KEY is not configured (Codex not in use).
+ */
+export function startOpenAICredentialProxy(
+  port: number,
+  host = '127.0.0.1',
+): Promise<Server | null> {
+  const secrets = readEnvFile(['OPENAI_API_KEY']);
+  const apiKey = secrets.OPENAI_API_KEY;
+
+  if (!apiKey) {
+    logger.info('No OPENAI_API_KEY found, skipping OpenAI credential proxy');
+    return Promise.resolve(null);
+  }
+
+  const upstreamUrl = new URL('https://api.openai.com');
+
+  return new Promise((resolve, reject) => {
+    const server = createServer((req, res) => {
+      const chunks: Buffer[] = [];
+      req.on('data', (c) => chunks.push(c));
+      req.on('end', () => {
+        const body = Buffer.concat(chunks);
+        const headers: Record<string, string | number | string[] | undefined> =
+          {
+            ...(req.headers as Record<string, string>),
+            host: upstreamUrl.host,
+            'content-length': body.length,
+          };
+
+        // Strip hop-by-hop headers
+        delete headers['connection'];
+        delete headers['keep-alive'];
+        delete headers['transfer-encoding'];
+
+        // Inject real API key
+        delete headers['authorization'];
+        headers['authorization'] = `Bearer ${apiKey}`;
+
+        const upstream = httpsRequest(
+          {
+            hostname: upstreamUrl.hostname,
+            port: 443,
+            path: req.url,
+            method: req.method,
+            headers,
+          } as RequestOptions,
+          (upRes) => {
+            res.writeHead(upRes.statusCode!, upRes.headers);
+            upRes.pipe(res);
+          },
+        );
+
+        upstream.on('error', (err) => {
+          logger.error(
+            { err, url: req.url },
+            'OpenAI credential proxy upstream error',
+          );
+          if (!res.headersSent) {
+            res.writeHead(502);
+            res.end('Bad Gateway');
+          }
+        });
+
+        upstream.write(body);
+        upstream.end();
+      });
+    });
+
+    server.listen(port, host, () => {
+      logger.info({ port, host }, 'OpenAI credential proxy started');
+      resolve(server);
+    });
+
+    server.on('error', reject);
+  });
+}

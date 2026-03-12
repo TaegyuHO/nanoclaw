@@ -14,6 +14,7 @@ import {
   DATA_DIR,
   GROUPS_DIR,
   IDLE_TIMEOUT,
+  OPENAI_CREDENTIAL_PROXY_PORT,
   TIMEZONE,
 } from './config.js';
 import { resolveGroupFolderPath, resolveGroupIpcPath } from './group-folder.js';
@@ -237,6 +238,14 @@ function buildContainerArgs(
   } else {
     args.push('-e', 'CLAUDE_CODE_OAUTH_TOKEN=placeholder');
   }
+
+  // OpenAI/Codex: route through OpenAI credential proxy (same isolation pattern)
+  // Codex CLI reads OPENAI_BASE_URL and OPENAI_API_KEY from environment
+  args.push(
+    '-e',
+    `OPENAI_BASE_URL=http://${CONTAINER_HOST_GATEWAY}:${OPENAI_CREDENTIAL_PROXY_PORT}`,
+  );
+  args.push('-e', 'OPENAI_API_KEY=placeholder');
 
   // Runtime-specific args for host gateway resolution
   args.push(...hostGatewayArgs());

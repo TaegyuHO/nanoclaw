@@ -22,6 +22,18 @@ groups/global/*
 *.keys.json
 .env
 
+# Claude Code (user-specific / per-installation)
+.claude/settings.local.json
+.claude/commands/
+.claude/skills/openspec-*/
+
+# Codex (per-installation)
+.codex/
+
+# OpenSpec work-in-progress (per-installation)
+openspec/changes/
+!openspec/changes/archive/
+
 # Temp files
 .tmp-*
 
